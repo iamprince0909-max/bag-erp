@@ -6,7 +6,7 @@ async function loadSpecSheet(){
   const res = await fetch(SPEC_URL);
   const text = await res.text();
 
-  const rows = text.split("\n").map(r => r.split(","));
+  const rows = text.trim().split("\n").map(r => r.split(","));
   const headers = rows.shift();
 
   const data = rows.map(r=>{
@@ -15,7 +15,10 @@ async function loadSpecSheet(){
     return obj;
   });
 
-  localStorage.setItem("specSheet",JSON.stringify(data));
+  localStorage.setItem("specSheet", JSON.stringify(data));
+
+  // 🔥 tell app sheet is ready
+  document.dispatchEvent(new Event("spec-ready"));
 }
 
 loadSpecSheet();
