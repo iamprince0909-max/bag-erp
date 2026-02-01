@@ -6,11 +6,14 @@ if(s.includes("TAN")) return "Tan";
 return "";
 }
 
-/* ===== CUTTING PLANNING ===== */
+/* ===== WAIT FOR SPEC SHEET ===== */
+
+document.addEventListener("spec-ready", buildUI);
+
+function buildUI(){
 
 const grid = document.getElementById("cardGrid");
-
-if(grid){
+if(!grid) return;
 
 const saved = JSON.parse(localStorage.getItem("cuttingPlan")||"{}");
 const specs = JSON.parse(localStorage.getItem("specSheet")||"[]");
@@ -45,14 +48,12 @@ localStorage.setItem("cuttingPlan",JSON.stringify(data));
 alert("Saved");
 }
 
-/* ===== PRINT ===== */
+/* PRINT */
 
 const table=document.getElementById("printTable");
 
 if(table){
-
 const data=JSON.parse(localStorage.getItem("cuttingPlan")||"{}");
-
 Object.keys(data).forEach(style=>{
 table.innerHTML+=`
 <tr>
@@ -63,12 +64,11 @@ table.innerHTML+=`
 });
 }
 
-/* ===== MATERIAL ===== */
+/* MATERIAL */
 
 const materialGrid=document.getElementById("materialGrid");
 
 if(materialGrid){
-
 const plan=JSON.parse(localStorage.getItem("cuttingPlan")||"{}");
 
 Object.keys(plan).forEach(style=>{
@@ -76,7 +76,6 @@ const qty=plan[style];
 
 materialGrid.innerHTML+=`
 <div class="style-card">
-
 <strong>${style}</strong>
 <div>Cut Qty: ${qty}</div>
 
@@ -93,7 +92,6 @@ materialGrid.innerHTML+=`
 <input oninput="calc('${style}',${qty},this.value,'trims')">
 
 <div id="total-${style}"></div>
-
 </div>`;
 });
 }
