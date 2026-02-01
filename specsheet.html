@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Spec Sheet</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/specsheet.js" defer></script>
+</head>
+
+<body>
+
+<header class="top-bar">
+<img src="logo.png" class="logo">
+<h1>SPEC SHEET BUILDER</h1>
+</header>
+
+<div class="spec-header">
+
+<label>Style:</label>
+<input id="style">
+
+<label>Brand:</label>
+<input id="brand" value="Gauge Machine">
+
+<label>Colour:</label>
+<input id="colour">
+
+<label>Order Qty:</label>
+<input id="qty">
+
+<button onclick="saveSpec()">💾 Save</button>
+
+</div>
+
+<table id="specTable">
+<tr>
+<th>#</th>
+<th>Material</th>
+<th>Description</th>
+<th>Per Pcs</th>
+<th>Unit</th>
+<th>Unit Cost</th>
+<th>Total Cost</th>
+</tr>
+</table>
+
+<button onclick="addRow()">+ Add Material</button>
+
+</body>
+</html>
