@@ -6,23 +6,15 @@ if(s.includes("TAN")) return "Tan";
 return "";
 }
 
-/* ===== WAIT FOR SPEC SHEET ===== */
-
-document.addEventListener("spec-ready", buildUI);
-
-function buildUI(){
+/* BUILD CUTTING UI */
 
 const grid = document.getElementById("cardGrid");
-if(!grid) return;
+
+if(grid){
 
 const saved = JSON.parse(localStorage.getItem("cuttingPlan")||"{}");
-const specs = JSON.parse(localStorage.getItem("specSheet")||"[]");
 
-const styles = [...new Set(
-specs.map(r => r["Style No"] || r["Style"] || r["STYLE"])
-)].filter(Boolean);
-
-styles.forEach(style=>{
+STYLES.forEach(style=>{
 
 const colour = colourFromStyle(style);
 
@@ -54,6 +46,7 @@ const table=document.getElementById("printTable");
 
 if(table){
 const data=JSON.parse(localStorage.getItem("cuttingPlan")||"{}");
+
 Object.keys(data).forEach(style=>{
 table.innerHTML+=`
 <tr>
@@ -69,6 +62,7 @@ table.innerHTML+=`
 const materialGrid=document.getElementById("materialGrid");
 
 if(materialGrid){
+
 const plan=JSON.parse(localStorage.getItem("cuttingPlan")||"{}");
 
 Object.keys(plan).forEach(style=>{
