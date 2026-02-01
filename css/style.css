@@ -1,0 +1,120 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,Arial;
+}
+
+body{
+background:linear-gradient(45deg,#1f2933,#111827);
+color:white;
+min-height:100vh;
+}
+
+/* HEADER */
+.top-bar{
+display:flex;
+align-items:center;
+padding:20px 40px;
+gap:20px;
+}
+
+.logo{height:70px;}
+
+h1{
+font-size:20px;
+letter-spacing:3px;
+}
+
+/* DASHBOARD */
+.dashboard{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
+padding:40px;
+}
+
+.dash-card{
+background:rgba(255,255,255,.08);
+padding:30px;
+border-radius:20px;
+text-decoration:none;
+color:white;
+transition:.3s;
+}
+
+.dash-card:hover{
+transform:translateY(-8px);
+background:rgba(255,255,255,.15);
+}
+
+/* GRID */
+.card-grid{
+padding:40px;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+gap:25px;
+}
+
+/* CARD */
+.style-card{
+background:rgba(255,255,255,.08);
+padding:20px;
+border-radius:18px;
+transition:.3s;
+}
+
+.style-card:hover{
+transform:translateY(-6px);
+}
+
+.style-card input{
+width:100%;
+margin-top:10px;
+padding:10px;
+border:none;
+border-radius:10px;
+}
+
+/* BUTTON */
+.bottom-action{
+text-align:center;
+padding:30px;
+}
+
+button{
+padding:14px 30px;
+border:none;
+border-radius:30px;
+background:white;
+color:black;
+font-weight:600;
+cursor:pointer;
+}
+
+/* TABLE */
+table{
+width:90%;
+margin:30px auto;
+border-collapse:collapse;
+background:white;
+color:black;
+}
+
+th,td{
+padding:12px;
+border:1px solid #ccc;
+text-align:center;
+}
+
+/* PRINT */
+@media print{
+body *{visibility:hidden;}
+.print-sheet,.print-sheet *{visibility:visible;}
+.print-sheet{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+}
+}
