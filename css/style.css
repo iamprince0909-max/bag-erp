@@ -55,14 +55,15 @@ grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
 gap:25px;
 }
 
-.dash-card{
-background:rgba(255,255,255,.08);
-padding:30px;
-border-radius:20px;
-text-decoration:none;
-color:white;
-transition:.3s;
+.dashboard{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:30px;
+padding:60px;
+max-width:1200px;
+margin:auto;
 }
+
 
 .dash-card:hover{
 transform:translateY(-8px);
@@ -159,4 +160,5 @@ border-radius:20px;
 border:none;
 cursor:pointer;
 }
+
 
