@@ -1,15 +1,12 @@
-const specs = JSON.parse(localStorage.getItem("specs") || "{}");
-const cutting = JSON.parse(localStorage.getItem("cutPlan") || "{}");
-
-const wrap = document.getElementById("materialWrap");
+let specs = JSON.parse(localStorage.getItem("specs") || "{}");
+let plan = JSON.parse(localStorage.getItem("cutPlan") || "{}");
 
 let total = {};
 
-Object.keys(cutting).forEach(style=>{
+Object.keys(plan).forEach(style=>{
 
-  const qty = cutting[style].qty;
-
-  const spec = specs[style];
+  let qty = plan[style].qty;
+  let spec = specs[style];
 
   if(!spec) return;
 
@@ -27,19 +24,16 @@ function render(){
 
   let html = `
   <table>
-    <tr>
-      <th>Material</th>
-      <th>Total Required</th>
-    </tr>`;
+  <tr><th>Material</th><th>Total Required</th></tr>`;
 
   Object.keys(total).forEach(m=>{
-    html+=`<tr>
-      <td>${m}</td>
-      <td>${total[m].toFixed(2)}</td>
+    html += `<tr>
+    <td>${m}</td>
+    <td>${total[m].toFixed(2)}</td>
     </tr>`;
   });
 
-  html+="</table>";
+  html += "</table>";
 
-  wrap.innerHTML = html;
+  document.getElementById("materialWrap").innerHTML = html;
 }
