@@ -1,6 +1,14 @@
 // BACK BUTTON
 function goBack(){
-  window.history.back();
+
+  if(document.referrer){
+    window.history.back();
+  }else{
+    window.location.href = "index.html";
+  }
+
+}
+
 }
 
 // TABLE ROW ADD
