@@ -2,25 +2,24 @@
 <html>
 <head>
 <title>Spec Sheet</title>
+
 <link rel="stylesheet" href="css/style.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script src="js/specsheet.js" defer></script>
 </head>
 
 <body>
 
 <header class="top-bar">
-
-<button onclick="goBack()" class="back-btn">⬅ Back</button>
-
-<img src="logo.png" class="logo">
-<h1>SPEC SHEET BUILDER</h1>
-
-<button onclick="showSaved()" class="load-btn">📂 Load Saved</button>
-
+<button class="back-btn" onclick="history.back()">← Back</button>
+<h1>GAUGE MACHINE — SPEC SHEET</h1>
+<button class="load-btn" onclick="loadSaved()">📂 Load Saved</button>
 </header>
 
-
-<div class="spec-header">
+<div class="form-row">
 
 <label>Style:</label>
 <input id="style">
@@ -33,20 +32,17 @@
 
 <label>Order Qty:</label>
 <input id="qty">
-<div class="saved-panel">
-
-<input id="searchBox" placeholder="Search style..." oninput="filterSaved()">
-
-<div id="savedList" class="saved-list"></div>
-
-</div>
-
 
 <button onclick="saveSpec()">💾 Save</button>
+<button onclick="exportPDF()">📄 PDF</button>
+<button onclick="exportExcel()">📊 Excel</button>
 
 </div>
 
+<div id="savedPanel" class="saved-panel"></div>
+
 <table id="specTable">
+
 <tr>
 <th>#</th>
 <th>Material</th>
@@ -56,9 +52,12 @@
 <th>Unit Cost</th>
 <th>Total Cost</th>
 </tr>
+
 </table>
 
+<div class="bottom-action">
 <button onclick="addRow()">+ Add Material</button>
+</div>
 
 </body>
 </html>
