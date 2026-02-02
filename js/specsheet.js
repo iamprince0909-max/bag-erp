@@ -1,63 +1,67 @@
-// BACK BUTTON
-function goBack(){
+let table = document.getElementById("specTable");
+let savedPanel = document.getElementById("savedPanel");
 
+init();
+
+function init(){
+  addRow();
+  renderSaved();
+}
+
+function goBack(){
   if(document.referrer){
     window.history.back();
   }else{
     window.location.href = "index.html";
   }
-
 }
 
-}
+/* ---------- ADD ROW ---------- */
 
-// TABLE ROW ADD
 function addRow(){
-  const table = document.getElementById("specTable");
-
-  const row = table.insertRow();
-  const index = table.rows.length - 1;
+  let row = table.insertRow();
 
   row.innerHTML = `
-    <td>${index}</td>
-    <td><input></td>
-    <td><input></td>
-    <td><input type="number"></td>
-    <td><input></td>
-    <td><input type="number"></td>
-    <td><input type="number"></td>
+  <td>${table.rows.length-1}</td>
+  <td><input></td>
+  <td><input></td>
+  <td><input></td>
+  <td><input></td>
+  <td><input></td>
+  <td><input></td>
   `;
 }
 
-// SAVE SPEC
+/* ---------- SAVE ---------- */
+
 function saveSpec(){
 
-  const style = document.getElementById("style").value;
+  let style = document.getElementById("style").value || "";
+  let brand = document.getElementById("brand").value || "";
+  let colour = document.getElementById("colour").value || "";
+  let qty = document.getElementById("qty").value || "";
+
   if(!style){
     alert("Enter style name");
     return;
   }
 
-  const brand = document.getElementById("brand").value;
-  const colour = document.getElementById("colour").value;
-  const qty = document.getElementById("qty").value;
+  let rows = [];
 
-  const rows = [];
-  document.querySelectorAll("#specTable tr").forEach((tr,i)=>{
-    if(i===0) return;
+  for(let i=1;i<table.rows.length;i++){
+    let cells = table.rows[i].querySelectorAll("input");
 
-    const inputs = tr.querySelectorAll("input");
     rows.push({
-      material: inputs[0].value,
-      desc: inputs[1].value,
-      per: inputs[2].value,
-      unit: inputs[3].value,
-      cost: inputs[4].value,
-      total: inputs[5].value
+      material: cells[0].value || "",
+      desc: cells[1].value || "",
+      perpcs: cells[2].value || "",
+      unit: cells[3].value || "",
+      cost: cells[4].value || "",
+      total: cells[5].value || ""
     });
-  });
+  }
 
-  const data = {
+  let data = {
     style,
     brand,
     colour,
@@ -66,47 +70,24 @@ function saveSpec(){
   };
 
   localStorage.setItem("spec_"+style, JSON.stringify(data));
-  alert("Saved");
 
-  loadSaved();
+  renderSaved();
+  alert("Saved!");
 }
 
-// LOAD SAVED PANEL
-function loadSaved(){
+/* ---------- LOAD ---------- */
 
-  const panel = document.getElementById("savedPanel");
-  panel.innerHTML = "<h3>Saved Styles</h3>";
+function loadStyle(style){
 
-  Object.keys(localStorage).forEach(key=>{
-    if(!key.startsWith("spec_")) return;
-
-    const style = key.replace("spec_","");
-
-    const div = document.createElement("div");
-    div.className = "saved-item";
-
-    div.innerHTML = `
-      ${style}
-      <button onclick="editSpec('${style}')">✏ Edit</button>
-      <button onclick="deleteSpec('${style}')">❌</button>
-    `;
-
-    panel.appendChild(div);
-  });
-}
-
-// EDIT SPEC
-function editSpec(style){
-
-  const data = JSON.parse(localStorage.getItem("spec_"+style));
+  let data = JSON.parse(localStorage.getItem("spec_"+style));
   if(!data) return;
 
-  document.getElementById("style").value = data.style;
-  document.getElementById("brand").value = data.brand;
-  document.getElementById("colour").value = data.colour;
-  document.getElementById("qty").value = data.qty;
+  document.getElementById("style").value = data.style || "";
+  document.getElementById("brand").value = data.brand || "";
+  document.getElementById("colour").value = data.colour || "";
+  document.getElementById("qty").value = data.qty || "";
 
-  const table = document.getElementById("specTable");
+  // clear table
   table.innerHTML = `
   <tr>
   <th>#</th>
@@ -116,75 +97,89 @@ function editSpec(style){
   <th>Unit</th>
   <th>Unit Cost</th>
   <th>Total Cost</th>
-  </tr>
-  `;
+  </tr>`;
 
-  data.rows.forEach(r=>{
-    const row = table.insertRow();
-    row.innerHTML = `
-      <td>${table.rows.length-1}</td>
-      <td><input value="${r.material}"></td>
-      <td><input value="${r.desc}"></td>
-      <td><input value="${r.per}"></td>
-      <td><input value="${r.unit}"></td>
-      <td><input value="${r.cost}"></td>
-      <td><input value="${r.total}"></td>
-    `;
+  data.rows.forEach((r,i)=>{
+    addRow();
+    let cells = table.rows[i+1].querySelectorAll("input");
+
+    cells[0].value = r.material;
+    cells[1].value = r.desc;
+    cells[2].value = r.perpcs;
+    cells[3].value = r.unit;
+    cells[4].value = r.cost;
+    cells[5].value = r.total;
   });
+
 }
 
-// DELETE SPEC
-function deleteSpec(style){
-  if(confirm("Delete "+style+" ?")){
-    localStorage.removeItem("spec_"+style);
-    loadSaved();
+/* ---------- SAVED LIST ---------- */
+
+function renderSaved(){
+
+  savedPanel.innerHTML = "<h3>Saved Styles</h3>";
+
+  for(let key in localStorage){
+
+    if(key.startsWith("spec_")){
+
+      let style = key.replace("spec_","");
+
+      savedPanel.innerHTML += `
+      <div class="saved-item">
+        <button onclick="loadStyle('${style}')">${style}</button>
+        <button onclick="deleteStyle('${style}')">❌</button>
+      </div>`;
+    }
   }
 }
 
-// EXPORT PDF
-function exportPDF(){
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  doc.text("Spec Sheet", 20, 20);
-
-  let y = 40;
-
-  document.querySelectorAll("#specTable tr").forEach(tr=>{
-    let x = 20;
-
-    tr.querySelectorAll("td,th").forEach(td=>{
-      doc.text(td.innerText || td.querySelector("input")?.value || "", x, y);
-      x += 40;
-    });
-
-    y += 10;
-  });
-
-  doc.save("specsheet.pdf");
+function deleteStyle(style){
+  localStorage.removeItem("spec_"+style);
+  renderSaved();
 }
 
-// EXPORT EXCEL
+/* ---------- EXPORT PDF ---------- */
+
+function exportPDF(){
+  const { jsPDF } = window.jspdf;
+  let doc = new jsPDF();
+
+  doc.text("Spec Sheet", 20,20);
+
+  let y = 30;
+
+  for(let i=1;i<table.rows.length;i++){
+    let row = table.rows[i];
+    let text = "";
+
+    row.querySelectorAll("input").forEach(input=>{
+      text += input.value + " | ";
+    });
+
+    doc.text(text,20,y);
+    y+=8;
+  }
+
+  doc.save("spec.pdf");
+}
+
+/* ---------- EXPORT EXCEL ---------- */
+
 function exportExcel(){
 
-  const wb = XLSX.utils.book_new();
-  const rows = [];
+  let data = [];
 
-  document.querySelectorAll("#specTable tr").forEach(tr=>{
-    const row = [];
-    tr.querySelectorAll("td,th").forEach(td=>{
-      row.push(td.innerText || td.querySelector("input")?.value || "");
+  for(let i=1;i<table.rows.length;i++){
+    let row = [];
+    table.rows[i].querySelectorAll("input").forEach(input=>{
+      row.push(input.value);
     });
-    rows.push(row);
-  });
+    data.push(row);
+  }
 
-  const ws = XLSX.utils.aoa_to_sheet(rows);
+  let ws = XLSX.utils.aoa_to_sheet(data);
+  let wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Spec");
-
-  XLSX.writeFile(wb, "specsheet.xlsx");
+  XLSX.writeFile(wb, "spec.xlsx");
 }
-
-// INIT
-loadSaved();
-addRow();
