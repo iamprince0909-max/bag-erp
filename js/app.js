@@ -120,12 +120,13 @@ function renderTable(){
 
 function updateQty(style,val){
 
-  console.log("Qty update:", style, val);
+  const num = Number(val);
 
-  plan[style].qty = Number(val);
+  plan[style].qty = isNaN(num) ? 0 : num;
 
   savePlan();
 }
+
 
 /* ---------- DELETE ---------- */
 
@@ -145,4 +146,5 @@ function savePlan(){
 
   console.log("Plan saved:", plan);
 }
+
 
