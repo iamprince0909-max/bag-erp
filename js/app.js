@@ -77,10 +77,7 @@ function renderTable(){
 
   const table = document.getElementById("cutTable");
 
-  if(!table){
-    console.log("Table not found");
-    return;
-  }
+  if(!table) return;
 
   table.innerHTML = `
   <tr>
@@ -92,15 +89,22 @@ function renderTable(){
 
   Object.keys(plan).forEach(style => {
 
+    const item = plan[style] || {};
+
+    // SAFE VALUES
+    const colour = item.colour || "";
+    const qty = Number(item.qty) || 0;
+
     const row = document.createElement("tr");
 
     row.innerHTML = `
       <td>${style}</td>
-      <td>${plan[style].colour || ""}</td>
+      <td>${colour}</td>
       <td>
         <input type="number"
-          value="${plan[style].qty}"
-          onchange="updateQty('${style}',this.value)">
+          value="${qty}"
+          min="0"
+          onchange="updateQty('${style}', this.value)">
       </td>
       <td>
         <button onclick="removeStyle('${style}')">❌</button>
@@ -109,9 +113,8 @@ function renderTable(){
 
     table.appendChild(row);
   });
-
-  console.log("Table rendered");
 }
+
 
 /* ---------- QTY UPDATE ---------- */
 
@@ -142,3 +145,4 @@ function savePlan(){
 
   console.log("Plan saved:", plan);
 }
+
