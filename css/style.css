@@ -75,6 +75,23 @@ padding:10px;
 border:none;
 border-radius:10px;
 }
+.saved-panel{
+padding:20px;
+}
+
+.saved-item{
+display:flex;
+gap:10px;
+align-items:center;
+margin:8px 0;
+}
+
+.saved-item button{
+padding:6px 12px;
+border-radius:20px;
+border:none;
+cursor:pointer;
+}
 
 /* BUTTON */
 .bottom-action{
@@ -130,4 +147,5 @@ left:0;
 width:100%;
 }
 }
+
 
