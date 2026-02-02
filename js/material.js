@@ -1,70 +1,44 @@
-window.onload = loadMaterial;
+window.onload = buildMaterial;
 
-function loadMaterial(){
+function buildMaterial(){
+
+  let container = document.getElementById("cardGrid");
+  container.innerHTML="";
+
+  let plan = JSON.parse(localStorage.getItem("cuttingPlan"))||{};
 
   let totals = {};
-  let found = false;
 
-  Object.keys(localStorage).forEach(key=>{
+  Object.keys(plan).forEach(style=>{
 
-    if(!key.startsWith("spec_")) return;
+    let qty = plan[style];
+    let spec = JSON.parse(localStorage.getItem("spec_"+style));
 
-    found = true;
-
-    let spec = JSON.parse(localStorage.getItem(key));
+    if(!spec) return;
 
     spec.materials.forEach(m=>{
 
-      let need = m.per * spec.qty;
+      let key = m.material+"|"+m.desc;
 
-      if(!totals[m.material]){
-        totals[m.material] = {
-          unit: m.unit,
-          total: 0
-        };
-      }
+      let value = m.per * qty;
 
-      totals[m.material].total += need;
+      if(!totals[key]) totals[key]=0;
 
+      totals[key]+=value;
     });
-
   });
 
-  render(totals,found);
-}
+  Object.keys(totals).forEach(mat=>{
 
-function render(data,found){
+    let [name,desc]=mat.split("|");
 
-  let wrap = document.getElementById("materialWrap");
-
-  if(!found){
-    wrap.innerHTML = `
-      <h2>No BOM data found</h2>
-      <p>Create Spec Sheet first</p>
-    `;
-    return;
-  }
-
-  let html = `
-  <table>
-  <tr>
-    <th>Material</th>
-    <th>Total Required</th>
-    <th>Unit</th>
-  </tr>
-  `;
-
-  Object.keys(data).forEach(name=>{
-    html += `
-      <tr>
-        <td>${name}</td>
-        <td>${data[name].total.toFixed(2)}</td>
-        <td>${data[name].unit}</td>
-      </tr>
+    container.innerHTML+=`
+      <div class="style-card">
+        <h3>${name}</h3>
+        <p>${desc}</p>
+        <h2>${totals[mat].toFixed(2)}</h2>
+      </div>
     `;
   });
 
-  html += "</table>";
-
-  wrap.innerHTML = html;
 }
