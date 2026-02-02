@@ -33,7 +33,14 @@
 
 <label>Order Qty:</label>
 <input id="qty">
+<div class="saved-panel">
+
+<input id="searchBox" placeholder="Search style..." oninput="filterSaved()">
+
 <div id="savedList" class="saved-list"></div>
+
+</div>
+
 
 <button onclick="saveSpec()">💾 Save</button>
 
