@@ -2,63 +2,35 @@
 <html>
 <head>
 <title>Spec Sheet</title>
-
 <link rel="stylesheet" href="css/style.css">
 <script src="js/specsheet.js" defer></script>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 </head>
 
 <body>
 
-<!-- HEADER -->
 <header class="top-bar">
-  <button class="back-btn" onclick="window.location.href='/bag-erp/index.html'">← Back</button>
-  <img src="logo.png" class="logo">
-  <h1>GAUGE MACHINE — SPEC SHEET</h1>
+<button onclick="location.href='/bag-erp/index.html'">← Back</button>
+<h1>SPEC SHEET</h1>
 </header>
 
-<!-- FORM -->
-<div class="form-row" style="padding:40px; display:flex; flex-wrap:wrap; gap:15px; align-items:center;">
+<div style="padding:40px">
 
-<label>Style:</label>
+Style:
 <input id="style">
 
-<label>Brand:</label>
-<input id="brand" value="Gauge Machine">
+<button onclick="saveSpec()">Save</button>
 
-<label>Colour:</label>
-<input id="colour">
-
-<label>Order Qty:</label>
-<input id="qty">
-
-<button onclick="saveSpec()">💾 Save</button>
-
-</div>
-
-<!-- SAVED STYLES -->
-<h2 style="padding-left:40px;">Saved Styles</h2>
-<div id="savedPanel" class="saved-panel"></div>
-
-<!-- TABLE -->
 <table id="specTable">
-
 <tr>
 <th>#</th>
 <th>Material</th>
-<th>Description</th>
 <th>Per Pcs</th>
-<th>Unit</th>
-<th>Unit Cost</th>
 </tr>
-
 </table>
 
-<!-- ADD BUTTON -->
-<div class="bottom-action">
-<button onclick="addRow()">+ Add Material</button>
+<br>
+<button onclick="addRow()">+ Add Row</button>
+
 </div>
 
 </body>
