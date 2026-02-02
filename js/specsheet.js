@@ -100,8 +100,20 @@ window.location.href = "index.html";
 
 function showSaved(){
 
-const box = document.getElementById("savedList");
+renderSaved("");
 
+}
+
+function filterSaved(){
+
+const q = document.getElementById("searchBox").value.toLowerCase();
+renderSaved(q);
+
+}
+
+function renderSaved(query){
+
+const box = document.getElementById("savedList");
 box.innerHTML = "<h3>Saved Styles</h3>";
 
 let found=false;
@@ -110,11 +122,37 @@ for(let i=0;i<localStorage.length;i++){
 
 const key = localStorage.key(i);
 
-if(key.startsWith("spec_")){
-
-found=true;
+if(!key.startsWith("spec_")) continue;
 
 const style = key.replace("spec_","");
 
+if(query && !style.toLowerCase().includes(query)) continue;
+
+found=true;
+
 box.innerHTML += `
-<button onclick="loadFromList
+<div class="saved-item">
+<span>${style}</span>
+
+<button onclick="loadFromList('${style}')">✏ Edit</button>
+<button onclick="deleteSpec('${style}')">❌</button>
+
+</div>
+`;
+
+}
+
+if(!found) box.innerHTML+="<p>No saved specs</p>";
+
+}
+
+function deleteSpec(style){
+
+if(!confirm("Delete "+style+" ?")) return;
+
+localStorage.removeItem("spec_"+style);
+
+renderSaved("");
+
+}
+
