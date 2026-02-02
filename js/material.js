@@ -1,52 +1,45 @@
-window.onload = buildMaterial;
+const specs = JSON.parse(localStorage.getItem("specs") || "{}");
+const cutting = JSON.parse(localStorage.getItem("cutPlan") || "{}");
 
-function buildMaterial(){
+const wrap = document.getElementById("materialWrap");
 
-  const container = document.getElementById("cardGrid");
-  container.innerHTML = "";
+let total = {};
 
-  const plan = JSON.parse(localStorage.getItem("cuttingPlan")) || {};
+Object.keys(cutting).forEach(style=>{
 
-  if(Object.keys(plan).length === 0){
-    container.innerHTML = "<h2>No cutting plan found</h2>";
-    return;
-  }
+  const qty = cutting[style].qty;
 
-  let totals = {};
+  const spec = specs[style];
 
-  Object.keys(plan).forEach(style => {
+  if(!spec) return;
 
-    const qty = plan[style];
-    const spec = JSON.parse(localStorage.getItem("spec_" + style));
+  spec.rows.forEach(r=>{
 
-    if(!spec || !spec.materials) return;
+    if(!total[r.material]) total[r.material]=0;
 
-    spec.materials.forEach(m => {
+    total[r.material] += r.per * qty;
+  });
+});
 
-      if(!m.material || !m.per) return;
+render();
 
-      const key = m.material + " | " + (m.desc || "");
+function render(){
 
-      const value = Number(m.per) * Number(qty);
+  let html = `
+  <table>
+    <tr>
+      <th>Material</th>
+      <th>Total Required</th>
+    </tr>`;
 
-      if(!totals[key]) totals[key] = 0;
-      totals[key] += value;
-    });
+  Object.keys(total).forEach(m=>{
+    html+=`<tr>
+      <td>${m}</td>
+      <td>${total[m].toFixed(2)}</td>
+    </tr>`;
   });
 
-  Object.keys(totals).forEach(k => {
+  html+="</table>";
 
-    const [material, desc] = k.split("|");
-
-    const card = document.createElement("div");
-    card.className = "style-card";
-
-    card.innerHTML = `
-      <h3>${material}</h3>
-      <p>${desc || ""}</p>
-      <h2>${totals[k].toFixed(2)}</h2>
-    `;
-
-    container.appendChild(card);
-  });
+  wrap.innerHTML = html;
 }
