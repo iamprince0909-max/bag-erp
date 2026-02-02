@@ -1,7 +1,17 @@
+console.log("APP STARTED");
+
+/* ---------- LOAD STORAGE ---------- */
+
 let specs = JSON.parse(localStorage.getItem("specSheets")) || {};
 let plan = JSON.parse(localStorage.getItem("cuttingPlan")) || {};
 
+console.log("Loaded specs:", specs);
+console.log("Loaded plan:", plan);
+
+/* ---------- INIT ---------- */
+
 window.onload = () => {
+
   buildDropdown();
   renderTable();
 };
@@ -11,6 +21,12 @@ window.onload = () => {
 function buildDropdown(){
 
   const select = document.getElementById("styleSelect");
+
+  if(!select){
+    console.log("Dropdown not found");
+    return;
+  }
+
   select.innerHTML = `<option value="">Select Style</option>`;
 
   Object.keys(specs).forEach(style => {
@@ -21,12 +37,18 @@ function buildDropdown(){
 
     select.appendChild(opt);
   });
+
+  console.log("Dropdown built");
 }
+
+/* ---------- ADD STYLE ---------- */
 
 function addFromSpec(){
 
   const select = document.getElementById("styleSelect");
   const style = select.value;
+
+  console.log("Add clicked:", style);
 
   if(!style){
     alert("Select style first");
@@ -34,13 +56,15 @@ function addFromSpec(){
   }
 
   if(plan[style]){
-    alert("Style already added");
+    alert("Already added");
     return;
   }
 
+  const data = specs[style] || {};
+
   plan[style] = {
     qty: 0,
-    colour: specs[style]?.colour || specs[style]?.Colour || ""
+    colour: data.colour || data.Colour || ""
   };
 
   savePlan();
@@ -52,6 +76,11 @@ function addFromSpec(){
 function renderTable(){
 
   const table = document.getElementById("cutTable");
+
+  if(!table){
+    console.log("Table not found");
+    return;
+  }
 
   table.innerHTML = `
   <tr>
@@ -80,14 +109,22 @@ function renderTable(){
 
     table.appendChild(row);
   });
+
+  console.log("Table rendered");
 }
 
+/* ---------- QTY UPDATE ---------- */
+
 function updateQty(style,val){
+
+  console.log("Qty update:", style, val);
 
   plan[style].qty = Number(val);
 
   savePlan();
 }
+
+/* ---------- DELETE ---------- */
 
 function removeStyle(style){
 
@@ -102,4 +139,6 @@ function removeStyle(style){
 function savePlan(){
 
   localStorage.setItem("cuttingPlan", JSON.stringify(plan));
+
+  console.log("Plan saved:", plan);
 }
