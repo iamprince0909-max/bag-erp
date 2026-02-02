@@ -108,3 +108,7 @@ if(s.trims) html+=`Trims: ${s.trims*qty}<br>`;
 
 document.getElementById(`total-${style}`).innerHTML=html;
 }
+function goBack(){
+  window.history.back();
+}
+
