@@ -65,10 +65,22 @@ margin:auto;
 }
 
 
-.dash-card:hover{
-transform:translateY(-8px);
-background:rgba(255,255,255,.15);
+.dash-card{
+background:rgba(255,255,255,.08);
+padding:40px;
+border-radius:24px;
+text-decoration:none;
+color:white;
+transition:.35s;
+backdrop-filter:blur(6px);
 }
+
+.dash-card:hover{
+transform:translateY(-10px);
+background:rgba(255,255,255,.15);
+box-shadow:0 30px 60px rgba(0,0,0,.4);
+}
+
 
 /* STYLE CARD */
 .style-card{
@@ -159,6 +171,19 @@ padding:6px 12px;
 border-radius:20px;
 border:none;
 cursor:pointer;
+}
+
+@media(max-width:600px){
+
+.dashboard{
+padding:20px;
+}
+
+h1{
+font-size:16px;
+letter-spacing:2px;
+}
+
 }
 
 
