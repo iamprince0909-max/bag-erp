@@ -1,102 +1,102 @@
-function goBack(){
-  window.location.href="index.html";
-}
+let table = document.getElementById("specTable");
 
-window.onload = ()=>{
+window.onload = () => {
   addRow();
-  loadSaved();
+  showSaved();
+};
+
+function goBack(){
+  window.location="index.html";
 }
 
-function addRow(){
+/* ---------------- ADD ROW ---------------- */
 
-  let table = document.getElementById("specTable");
+function addRow(data={}){
   let row = table.insertRow();
 
-  let index = table.rows.length-1;
+  let index = table.rows.length - 1;
 
   row.innerHTML = `
     <td>${index}</td>
-    <td><input></td>
-    <td><input></td>
-    <td><input type="number"></td>
-    <td><input></td>
-    <td><input type="number"></td>
+    <td><input value="${data.material||""}"></td>
+    <td><input value="${data.desc||""}"></td>
+    <td><input value="${data.per||""}"></td>
+    <td><input value="${data.unit||""}"></td>
+    <td><input value="${data.cost||""}"></td>
+    <td><input value="${data.total||""}"></td>
   `;
 }
 
+/* ---------------- SAVE ---------------- */
+
 function saveSpec(){
 
-  let style = document.getElementById("style").value.trim();
-  if(!style){
-    alert("Enter style number");
-    return;
+  let style = document.getElementById("style").value;
+  if(!style) return alert("Enter style");
+
+  let spec = {
+    style,
+    brand: brand.value,
+    colour: colour.value,
+    qty: qty.value,
+    materials:[]
+  };
+
+  for(let i=1;i<table.rows.length;i++){
+
+    let cells = table.rows[i].cells;
+
+    spec.materials.push({
+      material: cells[1].children[0].value,
+      desc: cells[2].children[0].value,
+      per: parseFloat(cells[3].children[0].value)||0,
+      unit: cells[4].children[0].value,
+      cost: cells[5].children[0].value,
+      total: cells[6].children[0].value
+    });
   }
-
-  let brand = document.getElementById("brand").value;
-  let colour = document.getElementById("colour").value;
-  let qty = Number(document.getElementById("qty").value)||0;
-
-  let rows = document.querySelectorAll("#specTable tr");
-  let materials = [];
-
-  rows.forEach((row,i)=>{
-    if(i===0) return;
-
-    let inputs = row.querySelectorAll("input");
-    if(inputs.length<5) return;
-
-    let item = {
-      material: inputs[0].value,
-      desc: inputs[1].value,
-      per: Number(inputs[2].value)||0,
-      unit: inputs[3].value,
-      cost: Number(inputs[4].value)||0
-    };
-
-    if(item.material) materials.push(item);
-  });
-
-  let spec = {style,brand,colour,qty,materials};
 
   localStorage.setItem("spec_"+style,JSON.stringify(spec));
 
-  alert("Saved ✔");
-  loadSaved();
+  showSaved();
+  alert("Saved");
 }
 
-function loadSaved(){
+/* ---------------- SHOW SAVED ---------------- */
+
+function showSaved(){
 
   let panel = document.getElementById("savedPanel");
-  panel.innerHTML="";
+  panel.innerHTML = "<h3>Saved Styles</h3>";
 
   Object.keys(localStorage).forEach(key=>{
 
     if(!key.startsWith("spec_")) return;
 
-    let name = key.replace("spec_","");
+    let style = key.replace("spec_","");
 
-    let div = document.createElement("div");
-    div.className="saved-item";
-
-    div.innerHTML = `
-      <button onclick="editSpec('${name}')">${name}</button>
-      <button onclick="deleteSpec('${name}')">✕</button>
+    panel.innerHTML += `
+      <div class="saved-item">
+        <button onclick="loadSpec('${style}')">${style}</button>
+        <button onclick="deleteSpec('${style}')">✖</button>
+      </div>
     `;
-
-    panel.appendChild(div);
   });
 }
 
-function editSpec(name){
+/* ---------------- LOAD ---------------- */
 
-  let data = JSON.parse(localStorage.getItem("spec_"+name));
+function loadSpec(style){
 
-  document.getElementById("style").value = data.style;
-  document.getElementById("brand").value = data.brand;
-  document.getElementById("colour").value = data.colour;
-  document.getElementById("qty").value = data.qty;
+  let spec = JSON.parse(localStorage.getItem("spec_"+style));
+  if(!spec) return;
 
-  let table = document.getElementById("specTable");
+  document.getElementById("style").value = spec.style;
+  document.getElementById("brand").value = spec.brand;
+  document.getElementById("colour").value = spec.colour;
+  document.getElementById("qty").value = spec.qty;
+
+  // clear table
   table.innerHTML = `
   <tr>
   <th>#</th>
@@ -105,24 +105,18 @@ function editSpec(name){
   <th>Per Pcs</th>
   <th>Unit</th>
   <th>Unit Cost</th>
+  <th>Total Cost</th>
   </tr>
   `;
 
-  data.materials.forEach((m,i)=>{
-    let row = table.insertRow();
-    row.innerHTML = `
-      <td>${i+1}</td>
-      <td><input value="${m.material}"></td>
-      <td><input value="${m.desc}"></td>
-      <td><input type="number" value="${m.per}"></td>
-      <td><input value="${m.unit}"></td>
-      <td><input type="number" value="${m.cost}"></td>
-    `;
-  });
-
+  spec.materials.forEach(m=>addRow(m));
 }
 
-function deleteSpec(name){
-  localStorage.removeItem("spec_"+name);
-  loadSaved();
+/* ---------------- DELETE ---------------- */
+
+function deleteSpec(style){
+  if(confirm("Delete "+style+" ?")){
+    localStorage.removeItem("spec_"+style);
+    showSaved();
+  }
 }
