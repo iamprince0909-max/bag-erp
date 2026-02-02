@@ -1,62 +1,83 @@
-let plan = {};
+let selected = [];
 
-function addStyle(){
+// load styles from spec sheet
+function loadStyles() {
+  let db = JSON.parse(localStorage.getItem("specSheets") || "{}");
+  let sel = document.getElementById("styleSelect");
+  sel.innerHTML = "";
 
-  const style = document.getElementById("styleSelect").value;
-  const qty = Number(prompt("Enter Qty"));
-
-  if(!style || !qty) return;
-
-  plan[style] = { qty };
-
-  localStorage.setItem("cutPlan", JSON.stringify(plan));
-
-  render();
+  Object.keys(db).forEach(style => {
+    let opt = document.createElement("option");
+    opt.value = style;
+    opt.textContent = style;
+    sel.appendChild(opt);
+  });
 }
 
-function render(){
+// add style to cutting table
+function addStyle() {
+  let style = document.getElementById("styleSelect").value;
+  if (!style) return;
 
-  const table = document.getElementById("cutTable");
+  let db = JSON.parse(localStorage.getItem("specSheets") || "{}");
+  let data = db[style];
+
+  selected.push({
+    style: style,
+    colour: data.colour || "",
+    qty: data.qty || 0
+  });
+
+  renderTable();
+}
+
+// render cutting table
+function renderTable() {
+  let table = document.getElementById("cutTable");
 
   table.innerHTML = `
-    <tr>
-      <th>Style</th>
-      <th>Qty</th>
-      <th>Delete</th>
-    </tr>`;
+<tr>
+<th>Style</th>
+<th>Colour</th>
+<th>Qty</th>
+<th>Delete</th>
+</tr>`;
 
-  Object.keys(plan).forEach(style => {
-
-    const row = table.insertRow();
-
-    row.innerHTML = `
-      <td>${style}</td>
-      <td>${plan[style].qty}</td>
-      <td><button onclick="del('${style}')">❌</button></td>
-    `;
+  selected.forEach((item, i) => {
+    table.innerHTML += `
+<tr>
+<td>${item.style}</td>
+<td>${item.colour}</td>
+<td>
+<input type="number" value="${item.qty}"
+oninput="updateQty(${i}, this.value)">
+</td>
+<td>
+<button onclick="removeRow(${i})">❌</button>
+</td>
+</tr>`;
   });
 }
 
-function del(style){
-  delete plan[style];
-  localStorage.setItem("cutPlan", JSON.stringify(plan));
-  render();
+// update qty
+function updateQty(i, val) {
+  selected[i].qty = Number(val);
 }
 
-function loadDropdown(){
-
-  const specs = JSON.parse(localStorage.getItem("specs") || "{}");
-
-  const sel = document.getElementById("styleSelect");
-
-  sel.innerHTML = `<option>Select Style</option>`;
-
-  Object.keys(specs).forEach(s=>{
-    sel.innerHTML += `<option>${s}</option>`;
-  });
+// remove row
+function removeRow(i) {
+  selected.splice(i, 1);
+  renderTable();
 }
 
-plan = JSON.parse(localStorage.getItem("cutPlan") || "{}");
+// export excel
+function exportExcel() {
+  let ws = XLSX.utils.json_to_sheet(selected);
+  let wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Cutting");
+  XLSX.writeFile(wb, "cutting_plan.xlsx");
+}
 
-loadDropdown();
-render();
+// init
+loadStyles();
+renderTable();
