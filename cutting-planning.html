@@ -1,28 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Cutting Planning</title>
-
-<link rel="stylesheet" href="css/style.css">
-<script src="js/app.js" defer></script>
-
-</head>
-<body>
-
-<header class="top-bar">
-  <button class="back-btn" onclick="window.location='index.html'">← Back</button>
-  <img src="logo.png" class="logo">
-  <h1>CUTTING PLANNING</h1>
-</header>
-
-<div style="padding:40px;">
+<div style="padding:40px">
 
 <select id="styleSelect"></select>
-<button onclick="addFromSpec()">Add Style</button>
+<button onclick="addStyle()">Add Style</button>
+
+<br><br>
 
 <table id="cutTable"></table>
 
-</div>
+<br>
 
-</body>
-</html>
+<button onclick="exportExcel()">Excel</button>
+<button onclick="window.print()">Print</button>
+
+</div>
