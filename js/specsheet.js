@@ -1,4 +1,16 @@
-const table = document.getElementById("specTable");
+let table;
+
+window.onload = () => {
+
+table = document.getElementById("specTable");
+
+document.getElementById("style").onchange = e=>{
+loadSpec(e.target.value);
+};
+
+addRow();
+
+};
 
 function addRow(data={}){
 
@@ -58,14 +70,18 @@ function loadSpec(style){
 
 const data = JSON.parse(localStorage.getItem("spec_"+style)||"[]");
 
-table.innerHTML=table.rows[0].outerHTML;
+table.innerHTML = `
+<tr>
+<th>#</th>
+<th>Material</th>
+<th>Description</th>
+<th>Per Pcs</th>
+<th>Unit</th>
+<th>Unit Cost</th>
+<th>Total Cost</th>
+</tr>
+`;
 
 data.forEach(addRow);
 
 }
-
-document.getElementById("style").onchange = e=>{
-loadSpec(e.target.value);
-};
-
-addRow();
