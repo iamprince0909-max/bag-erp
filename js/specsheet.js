@@ -1,122 +1,50 @@
-let table = document.getElementById("specTable");
+let currentSpec = { rows: [] };
 
-window.onload = () => {
-  addRow();
-  showSaved();
-};
+function addRow(){
 
-function goBack(){
-  window.location="index.html";
-}
+  const table = document.getElementById("specTable");
 
-/* ---------------- ADD ROW ---------------- */
+  const r = table.insertRow();
 
-function addRow(data={}){
-  let row = table.insertRow();
-
-  let index = table.rows.length - 1;
-
-  row.innerHTML = `
-    <td>${index}</td>
-    <td><input value="${data.material||""}"></td>
-    <td><input value="${data.desc||""}"></td>
-    <td><input value="${data.per||""}"></td>
-    <td><input value="${data.unit||""}"></td>
-    <td><input value="${data.cost||""}"></td>
-    <td><input value="${data.total||""}"></td>
+  r.innerHTML = `
+    <td>${table.rows.length-1}</td>
+    <td><input></td>
+    <td><input></td>
+    <td><input type="number"></td>
+    <td><input></td>
+    <td><input type="number"></td>
+    <td></td>
   `;
 }
-
-/* ---------------- SAVE ---------------- */
 
 function saveSpec(){
 
-  let style = document.getElementById("style").value;
-  if(!style) return alert("Enter style");
+  const style = document.getElementById("style").value;
 
-  let spec = {
-    style,
-    brand: brand.value,
-    colour: colour.value,
-    qty: qty.value,
-    materials:[]
-  };
+  const table = document.getElementById("specTable");
+
+  currentSpec.rows = [];
 
   for(let i=1;i<table.rows.length;i++){
 
-    let cells = table.rows[i].cells;
+    const cells = table.rows[i].cells;
 
-    spec.materials.push({
+    const row = {
       material: cells[1].children[0].value,
       desc: cells[2].children[0].value,
-      per: parseFloat(cells[3].children[0].value)||0,
+      per: Number(cells[3].children[0].value || 0),
       unit: cells[4].children[0].value,
-      cost: cells[5].children[0].value,
-      total: cells[6].children[0].value
-    });
+      cost: Number(cells[5].children[0].value || 0)
+    };
+
+    currentSpec.rows.push(row);
   }
 
-  localStorage.setItem("spec_"+style,JSON.stringify(spec));
+  let specs = JSON.parse(localStorage.getItem("specs") || "{}");
 
-  showSaved();
-  alert("Saved");
-}
+  specs[style] = currentSpec;
 
-/* ---------------- SHOW SAVED ---------------- */
+  localStorage.setItem("specs", JSON.stringify(specs));
 
-function showSaved(){
-
-  let panel = document.getElementById("savedPanel");
-  panel.innerHTML = "<h3>Saved Styles</h3>";
-
-  Object.keys(localStorage).forEach(key=>{
-
-    if(!key.startsWith("spec_")) return;
-
-    let style = key.replace("spec_","");
-
-    panel.innerHTML += `
-      <div class="saved-item">
-        <button onclick="loadSpec('${style}')">${style}</button>
-        <button onclick="deleteSpec('${style}')">✖</button>
-      </div>
-    `;
-  });
-}
-
-/* ---------------- LOAD ---------------- */
-
-function loadSpec(style){
-
-  let spec = JSON.parse(localStorage.getItem("spec_"+style));
-  if(!spec) return;
-
-  document.getElementById("style").value = spec.style;
-  document.getElementById("brand").value = spec.brand;
-  document.getElementById("colour").value = spec.colour;
-  document.getElementById("qty").value = spec.qty;
-
-  // clear table
-  table.innerHTML = `
-  <tr>
-  <th>#</th>
-  <th>Material</th>
-  <th>Description</th>
-  <th>Per Pcs</th>
-  <th>Unit</th>
-  <th>Unit Cost</th>
-  <th>Total Cost</th>
-  </tr>
-  `;
-
-  spec.materials.forEach(m=>addRow(m));
-}
-
-/* ---------------- DELETE ---------------- */
-
-function deleteSpec(style){
-  if(confirm("Delete "+style+" ?")){
-    localStorage.removeItem("spec_"+style);
-    showSaved();
-  }
+  alert("Spec saved");
 }
