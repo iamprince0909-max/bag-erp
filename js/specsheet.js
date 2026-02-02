@@ -1,16 +1,16 @@
-let table;
+window.addEventListener("DOMContentLoaded", () => {
 
-window.onload = () => {
+window.table = document.getElementById("specTable");
 
-table = document.getElementById("specTable");
-
-document.getElementById("style").onchange = e=>{
+document.getElementById("style").addEventListener("change", e=>{
 loadSpec(e.target.value);
-};
+});
 
 addRow();
 
-};
+});
+
+/* ---------- TABLE ---------- */
 
 function addRow(data={}){
 
@@ -31,12 +31,14 @@ row.innerHTML = `
 function calc(cell){
 
 const row = cell.parentNode;
-const per = Number(row.cells[3].innerText) || 0;
-const cost = Number(row.cells[5].innerText) || 0;
+const per = Number(row.cells[3].innerText)||0;
+const cost = Number(row.cells[5].innerText)||0;
 
-row.cells[6].innerText = (per * cost).toFixed(2);
+row.cells[6].innerText = (per*cost).toFixed(2);
 
 }
+
+/* ---------- SAVE ---------- */
 
 function saveSpec(){
 
@@ -66,6 +68,8 @@ alert("Saved ✔");
 
 }
 
+/* ---------- LOAD ---------- */
+
 function loadSpec(style){
 
 const data = JSON.parse(localStorage.getItem("spec_"+style)||"[]");
@@ -85,14 +89,22 @@ table.innerHTML = `
 data.forEach(addRow);
 
 }
+
+/* ---------- NAV ---------- */
+
 function goBack(){
 window.location.href = "index.html";
 }
 
+/* ---------- SAVED LIST ---------- */
+
 function showSaved(){
 
 const box = document.getElementById("savedList");
+
 box.innerHTML = "<h3>Saved Styles</h3>";
+
+let found=false;
 
 for(let i=0;i<localStorage.length;i++){
 
@@ -100,24 +112,9 @@ const key = localStorage.key(i);
 
 if(key.startsWith("spec_")){
 
+found=true;
+
 const style = key.replace("spec_","");
 
 box.innerHTML += `
-<button onclick="loadFromList('${style}')">
-${style}
-</button>
-`;
-
-}
-
-}
-
-}
-
-function loadFromList(style){
-
-document.getElementById("style").value = style;
-loadSpec(style);
-
-}
-
+<button onclick="loadFromList
