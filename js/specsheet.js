@@ -85,3 +85,39 @@ table.innerHTML = `
 data.forEach(addRow);
 
 }
+function goBack(){
+window.location.href = "index.html";
+}
+
+function showSaved(){
+
+const box = document.getElementById("savedList");
+box.innerHTML = "<h3>Saved Styles</h3>";
+
+for(let i=0;i<localStorage.length;i++){
+
+const key = localStorage.key(i);
+
+if(key.startsWith("spec_")){
+
+const style = key.replace("spec_","");
+
+box.innerHTML += `
+<button onclick="loadFromList('${style}')">
+${style}
+</button>
+`;
+
+}
+
+}
+
+}
+
+function loadFromList(style){
+
+document.getElementById("style").value = style;
+loadSpec(style);
+
+}
+
