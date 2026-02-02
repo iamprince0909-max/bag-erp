@@ -1,148 +1,60 @@
-window.addEventListener("DOMContentLoaded", () => {
+let table = document.getElementById("specTable");
 
-window.table = document.getElementById("specTable");
+function addRow(){
 
-document.getElementById("style").addEventListener("change", e=>{
-loadSpec(e.target.value);
-});
+let row = table.insertRow(-1);
 
-addRow();
-
-});
-
-/* ---------- TABLE ---------- */
-
-function addRow(data={}){
-
-const row = table.insertRow();
-
-row.innerHTML = `
-<td>${table.rows.length-1}</td>
-<td contenteditable>${data.mat||""}</td>
-<td contenteditable>${data.desc||""}</td>
-<td contenteditable oninput="calc(this)">${data.per||""}</td>
-<td contenteditable>${data.unit||""}</td>
-<td contenteditable oninput="calc(this)">${data.cost||""}</td>
-<td>${data.total||""}</td>
-`;
-
+for(let i=0;i<7;i++){
+let cell = row.insertCell(i);
+if(i===0){
+cell.innerText = table.rows.length-1;
+}else{
+cell.innerHTML = `<input>`;
+}
 }
 
-function calc(cell){
-
-const row = cell.parentNode;
-const per = Number(row.cells[3].innerText)||0;
-const cost = Number(row.cells[5].innerText)||0;
-
-row.cells[6].innerText = (per*cost).toFixed(2);
-
 }
-
-/* ---------- SAVE ---------- */
 
 function saveSpec(){
 
-const style = document.getElementById("style").value;
-if(!style) return alert("Enter style");
+let style = document.getElementById("style").value;
+if(!style) return alert("Enter style!");
 
-const rows=[];
+let data = [];
 
 for(let i=1;i<table.rows.length;i++){
+let inputs = table.rows[i].querySelectorAll("input");
+data.push([...inputs].map(x=>x.value));
+}
 
-const r=table.rows[i];
+localStorage.setItem("spec_"+style,JSON.stringify(data));
 
-rows.push({
-mat:r.cells[1].innerText,
-desc:r.cells[2].innerText,
-per:r.cells[3].innerText,
-unit:r.cells[4].innerText,
-cost:r.cells[5].innerText,
-total:r.cells[6].innerText
-});
+alert("Saved!");
+loadSaved();
 
 }
 
-localStorage.setItem("spec_"+style, JSON.stringify(rows));
+function loadSaved(){
 
-alert("Saved ✔");
-
-}
-
-/* ---------- LOAD ---------- */
-
-function loadSpec(style){
-
-const data = JSON.parse(localStorage.getItem("spec_"+style)||"[]");
-
-table.innerHTML = `
-<tr>
-<th>#</th>
-<th>Material</th>
-<th>Description</th>
-<th>Per Pcs</th>
-<th>Unit</th>
-<th>Unit Cost</th>
-<th>Total Cost</th>
-</tr>
-`;
-
-data.forEach(addRow);
-
-}
-
-/* ---------- NAV ---------- */
-
-function goBack(){
-window.location.href = "index.html";
-}
-
-/* ---------- SAVED LIST ---------- */
-
-function showSaved(){
-
-renderSaved("");
-
-}
-
-function filterSaved(){
-
-const q = document.getElementById("searchBox").value.toLowerCase();
-renderSaved(q);
-
-}
-
-function renderSaved(query){
-
-const box = document.getElementById("savedList");
-box.innerHTML = "<h3>Saved Styles</h3>";
-
-let found=false;
+let panel = document.getElementById("savedPanel");
+panel.innerHTML = "<h3>Saved Styles</h3>";
 
 for(let i=0;i<localStorage.length;i++){
 
-const key = localStorage.key(i);
-
+let key = localStorage.key(i);
 if(!key.startsWith("spec_")) continue;
 
-const style = key.replace("spec_","");
+let style = key.replace("spec_","");
 
-if(query && !style.toLowerCase().includes(query)) continue;
-
-found=true;
-
-box.innerHTML += `
+panel.innerHTML += `
 <div class="saved-item">
 <span>${style}</span>
-
-<button onclick="loadFromList('${style}')">✏ Edit</button>
+<button onclick="openSpec('${style}')">✏ Edit</button>
 <button onclick="deleteSpec('${style}')">❌</button>
-
 </div>
 `;
 
 }
-
-if(!found) box.innerHTML+="<p>No saved specs</p>";
 
 }
 
@@ -151,8 +63,44 @@ function deleteSpec(style){
 if(!confirm("Delete "+style+" ?")) return;
 
 localStorage.removeItem("spec_"+style);
-
-renderSaved("");
+loadSaved();
 
 }
 
+function openSpec(style){
+
+let data = JSON.parse(localStorage.getItem("spec_"+style));
+
+document.getElementById("style").value = style;
+
+table.innerHTML = table.rows[0].outerHTML;
+
+data.forEach(row=>{
+addRow();
+let inputs = table.rows[table.rows.length-1].querySelectorAll("input");
+inputs.forEach((inp,i)=>inp.value=row[i]);
+});
+
+}
+
+/* PDF */
+function exportPDF(){
+
+const { jsPDF } = window.jspdf;
+let doc = new jsPDF();
+doc.text("Spec Sheet",10,10);
+doc.autoTable({ html:'#specTable' });
+doc.save("specsheet.pdf");
+
+}
+
+/* Excel */
+function exportExcel(){
+
+let wb = XLSX.utils.table_to_book(document.getElementById("specTable"));
+XLSX.writeFile(wb,"specsheet.xlsx");
+
+}
+
+addRow();
+loadSaved();
