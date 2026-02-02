@@ -1,83 +1,66 @@
-let selected = [];
+let specs = JSON.parse(localStorage.getItem("specs") || "{}");
+let plan = JSON.parse(localStorage.getItem("cutPlan") || "{}");
 
-// load styles from spec sheet
-function loadStyles() {
-  let db = JSON.parse(localStorage.getItem("specSheets") || "{}");
+function loadDropdown(){
+
   let sel = document.getElementById("styleSelect");
   sel.innerHTML = "";
 
-  Object.keys(db).forEach(style => {
-    let opt = document.createElement("option");
-    opt.value = style;
-    opt.textContent = style;
-    sel.appendChild(opt);
+  Object.keys(specs).forEach(s=>{
+    sel.innerHTML += `<option>${s}</option>`;
   });
 }
 
-// add style to cutting table
-function addStyle() {
+function addStyle(){
+
   let style = document.getElementById("styleSelect").value;
-  if (!style) return;
+  let qty = Number(prompt("Enter qty"));
 
-  let db = JSON.parse(localStorage.getItem("specSheets") || "{}");
-  let data = db[style];
+  if(!style || !qty) return;
 
-  selected.push({
-    style: style,
-    colour: data.colour || "",
-    qty: data.qty || 0
-  });
+  plan[style] = { qty };
 
-  renderTable();
+  localStorage.setItem("cutPlan", JSON.stringify(plan));
+
+  render();
 }
 
-// render cutting table
-function renderTable() {
+function render(){
+
   let table = document.getElementById("cutTable");
 
   table.innerHTML = `
-<tr>
-<th>Style</th>
-<th>Colour</th>
-<th>Qty</th>
-<th>Delete</th>
-</tr>`;
+  <tr><th>Style</th><th>Qty</th><th>Delete</th></tr>`;
 
-  selected.forEach((item, i) => {
+  Object.keys(plan).forEach(s=>{
     table.innerHTML += `
-<tr>
-<td>${item.style}</td>
-<td>${item.colour}</td>
-<td>
-<input type="number" value="${item.qty}"
-oninput="updateQty(${i}, this.value)">
-</td>
-<td>
-<button onclick="removeRow(${i})">❌</button>
-</td>
-</tr>`;
+    <tr>
+      <td>${s}</td>
+      <td>${plan[s].qty}</td>
+      <td><button onclick="del('${s}')">❌</button></td>
+    </tr>`;
   });
 }
 
-// update qty
-function updateQty(i, val) {
-  selected[i].qty = Number(val);
+function del(s){
+  delete plan[s];
+  localStorage.setItem("cutPlan", JSON.stringify(plan));
+  render();
 }
 
-// remove row
-function removeRow(i) {
-  selected.splice(i, 1);
-  renderTable();
+function exportExcel(){
+
+  let data=[["Style","Qty"]];
+
+  Object.keys(plan).forEach(s=>{
+    data.push([s,plan[s].qty]);
+  });
+
+  let ws=XLSX.utils.aoa_to_sheet(data);
+  let wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Cutting");
+  XLSX.writeFile(wb,"cutting.xlsx");
 }
 
-// export excel
-function exportExcel() {
-  let ws = XLSX.utils.json_to_sheet(selected);
-  let wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Cutting");
-  XLSX.writeFile(wb, "cutting_plan.xlsx");
-}
-
-// init
-loadStyles();
-renderTable();
+loadDropdown();
+render();
