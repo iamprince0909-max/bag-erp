@@ -2,11 +2,7 @@
 <html>
 <head>
 <title>Spec Sheet</title>
-
 <link rel="stylesheet" href="css/style.css">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script src="js/specsheet.js" defer></script>
 </head>
@@ -14,14 +10,9 @@
 <body>
 
 <header class="top-bar">
-
 <button class="back-btn" onclick="goBack()">← Back</button>
-
 <img src="logo.png" class="logo">
 <h1>GAUGE MACHINE — SPEC SHEET</h1>
-
-<button class="load-btn" onclick="loadSaved()">📁 Load Saved</button>
-
 </header>
 
 <div class="form-row">
@@ -39,11 +30,10 @@
 <input id="qty">
 
 <button onclick="saveSpec()">💾 Save</button>
-<button onclick="exportPDF()">📄 PDF</button>
-<button onclick="exportExcel()">📊 Excel</button>
 
 </div>
 
+<h2 style="padding-left:40px;">Saved Styles</h2>
 <div id="savedPanel" class="saved-panel"></div>
 
 <table id="specTable">
@@ -55,7 +45,6 @@
 <th>Per Pcs</th>
 <th>Unit</th>
 <th>Unit Cost</th>
-<th>Total Cost</th>
 </tr>
 
 </table>
