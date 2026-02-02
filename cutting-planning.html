@@ -2,26 +2,27 @@
 <html>
 <head>
 <title>Cutting Planning</title>
-<link rel="stylesheet" href="css/style.css">
 
-<script src="./js/styles.js"></script>
-<script src="./js/app.js" defer></script>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/app.js" defer></script>
 
 </head>
 <body>
-<button class="back-btn" onclick="goBack()">← Back</button>
 
 <header class="top-bar">
+  <button class="back-btn" onclick="window.location='index.html'">← Back</button>
   <img src="logo.png" class="logo">
   <h1>CUTTING PLANNING</h1>
 </header>
 
-<section id="cardGrid" class="card-grid"></section>
+<div style="padding:40px;">
 
-<div class="bottom-action">
-  <button onclick="savePlan()">💾 Save</button>
+<select id="styleSelect"></select>
+<button onclick="addFromSpec()">Add Style</button>
+
+<table id="cutTable"></table>
+
 </div>
 
 </body>
 </html>
-
