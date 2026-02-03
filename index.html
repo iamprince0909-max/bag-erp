@@ -1,200 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Bag ERP System</title>
+<title>Bag ERP</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", sans-serif;
-  transition: 0.25s ease;
+body{
+font-family:Segoe UI;
+margin:0;
+background:#0f172a;
+color:white;
 }
 
-body {
-  background: linear-gradient(135deg, #020617, #0f172a, #1e293b);
-  color: white;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+header{
+padding:15px 30px;
+background:#020617;
+font-size:22px;
+font-weight:bold;
 }
 
-/* TOP NAVBAR */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 36px;
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+.container{
+display:flex;
+height:calc(100vh - 60px);
 }
 
-.logo {
-  letter-spacing: 3px;
-  font-size: 14px;
-  opacity: 0.8;
+.sidebar{
+width:220px;
+background:#111827;
+padding:20px;
 }
 
-.system-title {
-  font-size: 22px;
-  font-weight: bold;
+.sidebar button{
+width:100%;
+padding:14px;
+margin-bottom:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#1f2937;
+color:white;
 }
 
-.profile {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #38bdf8, #6366f1);
+.sidebar button.active{
+background:#3b82f6;
 }
 
-/* LAYOUT */
-.container {
-  display: flex;
-  flex: 1;
+.main{
+flex:1;
+padding:20px;
+overflow:auto;
 }
 
-/* SIDEBAR */
-.sidebar {
-  width: 260px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(14px);
-  border-right: 1px solid rgba(255,255,255,0.1);
-  padding: 30px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
 }
 
-.menu-btn {
-  padding: 16px;
-  border-radius: 14px;
-  border: none;
-  background: rgba(255,255,255,0.08);
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  text-align: left;
+td,th{
+border:1px solid #374151;
+padding:8px;
+text-align:center;
 }
 
-.menu-btn:hover {
-  background: linear-gradient(135deg, #38bdf8, #6366f1);
-  transform: translateX(6px);
+input{
+width:100%;
+background:#111827;
+border:none;
+color:white;
+padding:6px;
 }
 
-.menu-btn.active {
-  background: linear-gradient(135deg, #38bdf8, #6366f1);
-  font-weight: bold;
+button.small{
+padding:6px 10px;
+background:#ef4444;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
 }
 
-/* MAIN AREA */
-.main {
-  flex: 1;
-  padding: 40px;
+.add-btn{
+margin-top:10px;
+padding:10px;
+background:#22c55e;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
 }
 
-/* STATS */
-.stats-container {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.stat-card {
-  background: rgba(255,255,255,0.08);
-  padding: 28px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.12);
-  width: 200px;
-  text-align: center;
-}
-
-.stat-card span {
-  display: block;
-  font-size: 28px;
-  font-weight: bold;
-  margin-top: 10px;
-  color: #38bdf8;
-}
-
-/* PAGE TITLES */
-.page-title {
-  font-size: 34px;
-  margin-bottom: 10px;
-}
-
-.page-sub {
-  opacity: 0.7;
-  margin-bottom: 30px;
+.card{
+background:#1f2937;
+padding:20px;
+border-radius:12px;
+margin-top:20px;
 }
 </style>
 </head>
 
 <body>
 
-<header class="topbar">
-  <div>
-    <span class="logo">GAUGE MACHINE</span>
-    <span class="system-title"> Bag ERP System</span>
-  </div>
-  <div class="profile"></div>
-</header>
+<header>Bag ERP System</header>
 
 <div class="container">
 
-  <div class="sidebar">
-    <button class="menu-btn active" onclick="loadPage('dashboard', this)">📋 Spec Sheet</button>
-    <button class="menu-btn" onclick="loadPage('cutting', this)">✂ Cutting Planning</button>
-    <button class="menu-btn" onclick="loadPage('material', this)">📦 Material Planning</button>
-  </div>
+<div class="sidebar">
+<button onclick="showPage('spec',this)" class="active">Spec Sheet</button>
+<button onclick="showPage('cutting',this)">Cutting Calculator</button>
+<button onclick="showPage('material',this)">Material Summary</button>
+</div>
 
-  <div class="main" id="content"></div>
+<div class="main" id="content"></div>
 
 </div>
 
 <script>
-function loadPage(page, btn) {
 
-  document.querySelectorAll(".menu-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
+let specData = JSON.parse(localStorage.getItem("specData")) || [];
 
-  let content = "";
-
-  if(page === "dashboard") {
-    content = `
-      <div class="page-title">Dashboard Overview</div>
-      <div class="page-sub">Production • Planning • Control</div>
-      <div class="stats-container">
-        <div class="stat-card">Total Styles<span>18</span></div>
-        <div class="stat-card">Active Orders<span>12</span></div>
-        <div class="stat-card">Pending Materials<span>4</span></div>
-        <div class="stat-card">Cutting Ready<span>9</span></div>
-      </div>
-    `;
-  }
-
-  if(page === "cutting") {
-    content = `
-      <div class="page-title">Cutting Planning</div>
-      <div class="page-sub">Manage cutting boards & layouts</div>
-      <p>Cutting module coming soon...</p>
-    `;
-  }
-
-  if(page === "material") {
-    content = `
-      <div class="page-title">Material Planning</div>
-      <div class="page-sub">Auto material calculation</div>
-      <p>Material planning module coming soon...</p>
-    `;
-  }
-
-  document.getElementById("content").innerHTML = content;
+function saveData(){
+localStorage.setItem("specData",JSON.stringify(specData));
 }
 
-// load default page
-loadPage("dashboard", document.querySelector(".menu-btn.active"));
+function showPage(page,btn){
+document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+
+if(page==="spec") loadSpec();
+if(page==="cutting") loadCutting();
+if(page==="material") loadMaterial();
+}
+
+function loadSpec(){
+let html=`<h2>Spec Sheet Editor</h2>
+
+<table>
+<tr>
+<th>Part</th>
+<th>Material</th>
+<th>Qty</th>
+<th>Delete</th>
+</tr>`;
+
+specData.forEach((row,i)=>{
+html+=`
+<tr>
+<td><input value="${row.part}" onchange="updateRow(${i},'part',this.value)"></td>
+<td><input value="${row.mat}" onchange="updateRow(${i},'mat',this.value)"></td>
+<td><input type="number" value="${row.qty}" onchange="updateRow(${i},'qty',this.value)"></td>
+<td><button class="small" onclick="deleteRow(${i})">X</button></td>
+</tr>`;
+});
+
+html+=`</table>
+<button class="add-btn" onclick="addRow()">+ Add Row</button>`;
+
+document.getElementById("content").innerHTML=html;
+}
+
+function addRow(){
+specData.push({part:"",mat:"",qty:0});
+saveData();
+loadSpec();
+}
+
+function deleteRow(i){
+specData.splice(i,1);
+saveData();
+loadSpec();
+}
+
+function updateRow(i,key,val){
+specData[i][key]=val;
+saveData();
+}
+
+function loadCutting(){
+let total=specData.reduce((sum,r)=>sum+Number(r.qty||0),0);
+
+document.getElementById("content").innerHTML=`
+<h2>Cutting Calculator</h2>
+<div class="card">
+Total Pieces Needed:
+<h1>${total}</h1>
+</div>`;
+}
+
+function loadMaterial(){
+let matSummary={};
+
+specData.forEach(r=>{
+if(!matSummary[r.mat]) matSummary[r.mat]=0;
+matSummary[r.mat]+=Number(r.qty||0);
+});
+
+let html=`<h2>Material Summary</h2><div class="card">`;
+
+for(let m in matSummary){
+html+=`<p>${m} : <b>${matSummary[m]}</b></p>`;
+}
+
+html+=`</div>`;
+document.getElementById("content").innerHTML=html;
+}
+
+showPage("spec",document.querySelector(".sidebar button"));
+
 </script>
 
 </body>
