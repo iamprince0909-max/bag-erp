@@ -31,12 +31,6 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.topbar .left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
 .logo {
   letter-spacing: 3px;
   font-size: 14px;
@@ -74,9 +68,6 @@ body {
 }
 
 .menu-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   padding: 16px;
   border-radius: 14px;
   border: none;
@@ -84,12 +75,12 @@ body {
   color: white;
   font-size: 16px;
   cursor: pointer;
+  text-align: left;
 }
 
 .menu-btn:hover {
   background: linear-gradient(135deg, #38bdf8, #6366f1);
   transform: translateX(6px);
-  box-shadow: 0 10px 25px rgba(99,102,241,0.3);
 }
 
 .menu-btn.active {
@@ -97,20 +88,10 @@ body {
   font-weight: bold;
 }
 
-/* MAIN DASHBOARD */
+/* MAIN AREA */
 .main {
   flex: 1;
   padding: 40px;
-}
-
-.dashboard-title {
-  font-size: 34px;
-  margin-bottom: 8px;
-}
-
-.dashboard-sub {
-  opacity: 0.7;
-  margin-bottom: 30px;
 }
 
 /* STATS */
@@ -124,7 +105,6 @@ body {
   background: rgba(255,255,255,0.08);
   padding: 28px;
   border-radius: 18px;
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.12);
   width: 200px;
   text-align: center;
@@ -138,24 +118,15 @@ body {
   color: #38bdf8;
 }
 
-.stat-card:hover {
-  transform: translateY(-6px);
-  background: rgba(255,255,255,0.15);
+/* PAGE TITLES */
+.page-title {
+  font-size: 34px;
+  margin-bottom: 10px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .sidebar {
-    width: 70px;
-  }
-
-  .menu-btn span {
-    display: none;
-  }
-
-  .stats-container {
-    justify-content: center;
-  }
+.page-sub {
+  opacity: 0.7;
+  margin-bottom: 30px;
 }
 </style>
 </head>
@@ -163,9 +134,9 @@ body {
 <body>
 
 <header class="topbar">
-  <div class="left">
-    <div class="logo">GAUGE MACHINE</div>
-    <div class="system-title">Bag ERP System</div>
+  <div>
+    <span class="logo">GAUGE MACHINE</span>
+    <span class="system-title"> Bag ERP System</span>
   </div>
   <div class="profile"></div>
 </header>
@@ -173,24 +144,58 @@ body {
 <div class="container">
 
   <div class="sidebar">
-    <button class="menu-btn active">📋 <span>Spec Sheet</span></button>
-    <button class="menu-btn">✂ <span>Cutting Planning</span></button>
-    <button class="menu-btn">📦 <span>Material Planning</span></button>
+    <button class="menu-btn active" onclick="loadPage('dashboard', this)">📋 Spec Sheet</button>
+    <button class="menu-btn" onclick="loadPage('cutting', this)">✂ Cutting Planning</button>
+    <button class="menu-btn" onclick="loadPage('material', this)">📦 Material Planning</button>
   </div>
 
-  <div class="main">
-    <div class="dashboard-title">Dashboard Overview</div>
-    <div class="dashboard-sub">Production • Planning • Control</div>
-
-    <div class="stats-container">
-      <div class="stat-card">Total Styles<span>18</span></div>
-      <div class="stat-card">Active Orders<span>12</span></div>
-      <div class="stat-card">Pending Materials<span>4</span></div>
-      <div class="stat-card">Cutting Ready<span>9</span></div>
-    </div>
-  </div>
+  <div class="main" id="content"></div>
 
 </div>
+
+<script>
+function loadPage(page, btn) {
+
+  document.querySelectorAll(".menu-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  let content = "";
+
+  if(page === "dashboard") {
+    content = `
+      <div class="page-title">Dashboard Overview</div>
+      <div class="page-sub">Production • Planning • Control</div>
+      <div class="stats-container">
+        <div class="stat-card">Total Styles<span>18</span></div>
+        <div class="stat-card">Active Orders<span>12</span></div>
+        <div class="stat-card">Pending Materials<span>4</span></div>
+        <div class="stat-card">Cutting Ready<span>9</span></div>
+      </div>
+    `;
+  }
+
+  if(page === "cutting") {
+    content = `
+      <div class="page-title">Cutting Planning</div>
+      <div class="page-sub">Manage cutting boards & layouts</div>
+      <p>Cutting module coming soon...</p>
+    `;
+  }
+
+  if(page === "material") {
+    content = `
+      <div class="page-title">Material Planning</div>
+      <div class="page-sub">Auto material calculation</div>
+      <p>Material planning module coming soon...</p>
+    `;
+  }
+
+  document.getElementById("content").innerHTML = content;
+}
+
+// load default page
+loadPage("dashboard", document.querySelector(".menu-btn.active"));
+</script>
 
 </body>
 </html>
