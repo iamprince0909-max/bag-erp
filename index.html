@@ -1,90 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Bag ERP Multi Spec</title>
-
-<style>
-body{
-margin:0;
-font-family:Segoe UI;
-background:#0f172a;
-color:white;
-display:flex;
-height:100vh;
-}
-
-.sidebar{
-width:220px;
-background:#111827;
-padding:20px;
-}
-
-.sidebar h2{
-margin-bottom:20px;
-}
-
-.sidebar button{
-width:100%;
-padding:12px;
-margin-bottom:10px;
-border:none;
-border-radius:8px;
-background:#1f2937;
-color:white;
-cursor:pointer;
-}
-
-.sidebar button.active{
-background:#3b82f6;
-}
-
-.main{
-flex:1;
-padding:20px;
-overflow:auto;
-}
-
-.topbar{
-display:flex;
-gap:10px;
-margin-bottom:15px;
-}
-
-input,select{
-padding:8px;
-width:200px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-background:#020617;
-}
-
-th,td{
-border:1px solid #374151;
-padding:8px;
-text-align:center;
-}
-
-.add{
-background:#22c55e;
-border:none;
-padding:10px;
-margin-top:10px;
-color:white;
-cursor:pointer;
-}
-
-.delete{
-background:#ef4444;
-border:none;
-color:white;
-padding:5px 8px;
-cursor:pointer;
-}
-</style>
+<title>Bag ERP</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
@@ -92,150 +10,15 @@ cursor:pointer;
 <div class="sidebar">
 <h2>Bag ERP</h2>
 
-<select id="styleSelect" onchange="loadStyle()"></select>
-<button onclick="newStyle()">+ New Style</button>
-<button onclick="saveStyle()">💾 Save</button>
+<a href="specsheet.html">Spec Sheet</a>
+<a href="material.html">Material Summary</a>
+
 </div>
 
 <div class="main">
-
-<h1 id="styleTitle">Spec Sheet</h1>
-
-<div class="topbar">
-<input id="brand" placeholder="Brand">
-<input id="finish" placeholder="Finish">
-<input id="remarks" placeholder="Remarks">
+<h1>Dashboard</h1>
+<p>Welcome to Bag ERP System</p>
 </div>
-
-<table id="bom">
-<tr>
-<th>S.No</th>
-<th>Material</th>
-<th>Description</th>
-<th>Qty</th>
-<th>Unit</th>
-<th>Delete</th>
-</tr>
-</table>
-
-<button class="add" onclick="addRow()">+ Add Row</button>
-
-</div>
-
-<script>
-
-let db = JSON.parse(localStorage.getItem("specDB")) || {};
-let currentStyle = "";
-
-function refreshDropdown(){
-let sel=document.getElementById("styleSelect");
-sel.innerHTML="";
-for(let k in db){
-sel.innerHTML+=`<option>${k}</option>`;
-}
-}
-refreshDropdown();
-
-function newStyle(){
-let name=prompt("Enter style name:");
-if(!name) return;
-
-db[name]={brand:"",finish:"",remarks:"",bom:[]};
-currentStyle=name;
-saveDB();
-refreshDropdown();
-loadStyle();
-}
-
-function saveDB(){
-localStorage.setItem("specDB",JSON.stringify(db));
-}
-
-function loadStyle(){
-
-let sel=document.getElementById("styleSelect");
-currentStyle=sel.value;
-if(!db[currentStyle]) return;
-
-let s=db[currentStyle];
-
-styleTitle.innerText=currentStyle;
-brand.value=s.brand;
-finish.value=s.finish;
-remarks.value=s.remarks;
-
-resetTable();
-s.bom.forEach(addRow);
-}
-
-function saveStyle(){
-if(!currentStyle) return alert("No style selected");
-
-let rows=document.querySelectorAll("#bom tr");
-let bom=[];
-
-rows.forEach((r,i)=>{
-if(i===0) return;
-let cells=r.querySelectorAll("input");
-bom.push({
-mat:cells[0].value,
-desc:cells[1].value,
-qty:cells[2].value,
-unit:cells[3].value
-});
-});
-
-db[currentStyle]={
-brand:brand.value,
-finish:finish.value,
-remarks:remarks.value,
-bom
-};
-
-saveDB();
-alert("Saved!");
-}
-
-function resetTable(){
-document.getElementById("bom").innerHTML=`
-<tr>
-<th>S.No</th>
-<th>Material</th>
-<th>Description</th>
-<th>Qty</th>
-<th>Unit</th>
-<th>Delete</th>
-</tr>`;
-}
-
-function addRow(data={}){
-let table=document.getElementById("bom");
-let i=table.rows.length;
-
-let row=table.insertRow();
-row.innerHTML=`
-<td>${i}</td>
-<td><input value="${data.mat||""}"></td>
-<td><input value="${data.desc||""}"></td>
-<td><input type="number" value="${data.qty||""}"></td>
-<td><input value="${data.unit||""}"></td>
-<td><button class="delete" onclick="delRow(this)">X</button></td>
-`;
-}
-
-function delRow(btn){
-btn.parentElement.parentElement.remove();
-reindex();
-}
-
-function reindex(){
-let rows=document.querySelectorAll("#bom tr");
-rows.forEach((r,i)=>{
-if(i>0) r.cells[0].innerText=i;
-});
-}
-
-</script>
 
 </body>
 </html>
