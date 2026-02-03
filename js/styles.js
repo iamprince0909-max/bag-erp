@@ -1,17 +1,20 @@
-const STYLES = [
-"GMLPB052301OLI",
-"GMLPB052302BRO",
-"GMLPB052309BRO",
-"GMLPB052309BLK",
-"GMLPB052307BRO",
-"GMLPB0523010TAN",
-"GMLPB0523010BRO",
-"GMLPB0523010OLI",
-"GMLPB0523012TAN",
-"GMLPB0523014OLI",
-"GMLPB0523016OLI",
-"GMLPB0523021BRO",
-"GMLPB0523023OLI",
-"GMLPB0523023BRO",
-"GMLPB0523023BLK"
-];
+function createStyle(name){
+if(!name) return;
+if(!DB.styles[name]){
+DB.styles[name]={brand:"",finish:"",remarks:"",bom:[]};
+saveDB();
+}
+}
+
+function getStyle(name){
+return DB.styles[name] || null;
+}
+
+function saveStyle(name,data){
+DB.styles[name]=data;
+saveDB();
+}
+
+function getAllStyles(){
+return Object.keys(DB.styles);
+}
