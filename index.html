@@ -2,237 +2,210 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Spec ERP</title>
+<title>Bag ERP</title>
 
 <style>
 body{
 font-family:Segoe UI;
 margin:0;
-background:#f3f4f6;
+background:#0f172a;
+color:white;
 }
 
 header{
-background:#111827;
-color:white;
-padding:15px;
+padding:15px 30px;
+background:#020617;
 font-size:22px;
+font-weight:bold;
 }
 
 .container{
+display:flex;
+height:calc(100vh - 60px);
+}
+
+.sidebar{
+width:220px;
+background:#111827;
 padding:20px;
 }
 
-.topbar{
-display:flex;
-gap:10px;
-margin-bottom:15px;
-}
-
-input,button{
-padding:8px;
-font-size:14px;
-}
-
-button{
-cursor:pointer;
+.sidebar button{
+width:100%;
+padding:14px;
+margin-bottom:10px;
 border:none;
-background:#2563eb;
+border-radius:8px;
+cursor:pointer;
+background:#1f2937;
 color:white;
-border-radius:4px;
+}
+
+.sidebar button.active{
+background:#3b82f6;
+}
+
+.main{
+flex:1;
+padding:20px;
+overflow:auto;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
-background:white;
+margin-top:15px;
 }
 
 td,th{
-border:1px solid #444;
+border:1px solid #374151;
 padding:8px;
 text-align:center;
 }
 
-th{
-background:#e5e7eb;
+input{
+width:100%;
+background:#111827;
+border:none;
+color:white;
+padding:6px;
 }
 
-.section-title{
-text-align:center;
-font-size:22px;
-margin:15px 0;
-font-weight:bold;
-}
-
-.delete-btn{
+button.small{
+padding:6px 10px;
 background:#ef4444;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
 }
 
-.header-table td{
-font-weight:bold;
+.add-btn{
+margin-top:10px;
+padding:10px;
+background:#22c55e;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
 }
 
-.search{
-margin-left:auto;
+.card{
+background:#1f2937;
+padding:20px;
+border-radius:12px;
+margin-top:20px;
 }
 </style>
 </head>
 
 <body>
 
-<header>SPEC & MATERIAL DETAILS</header>
+<header>Bag ERP System</header>
 
 <div class="container">
 
-<div class="topbar">
-
-<input id="styleName" placeholder="Style Name">
-
-<button onclick="saveStyle()">Save Style</button>
-
-<select id="styleList" onchange="loadStyle()">
-<option value="">Load Style</option>
-</select>
-
-<input id="search" class="search" placeholder="Search Style" oninput="searchStyle()">
-
+<div class="sidebar">
+<button onclick="showPage('spec',this)" class="active">Spec Sheet</button>
+<button onclick="showPage('cutting',this)">Cutting Calculator</button>
+<button onclick="showPage('material',this)">Material Summary</button>
 </div>
 
-<table class="header-table">
-<tr>
-<td>Brand</td>
-<td><input id="brand"></td>
-<td>Finish</td>
-<td><input id="finish"></td>
-</tr>
-<tr>
-<td>Remarks</td>
-<td colspan="3"><input id="remarks"></td>
-</tr>
-</table>
-
-<div class="section-title">Material BOM</div>
-
-<table id="bom">
-<tr>
-<th>S.No</th>
-<th>Material</th>
-<th>Description</th>
-<th>Qty/Bag</th>
-<th>Unit</th>
-<th>Delete</th>
-</tr>
-</table>
-
-<button onclick="addRow()">+ Add Row</button>
+<div class="main" id="content"></div>
 
 </div>
 
 <script>
 
-let db = JSON.parse(localStorage.getItem("styles")) || {};
+let specData = JSON.parse(localStorage.getItem("specData")) || [];
 
-function refreshStyleList(){
-let list=document.getElementById("styleList");
-list.innerHTML='<option value="">Load Style</option>';
-for(let k in db){
-list.innerHTML+=`<option>${k}</option>`;
-}
-}
-refreshStyleList();
-
-function addRow(data={}){
-let table=document.getElementById("bom");
-let i=table.rows.length;
-
-let row=table.insertRow();
-
-row.innerHTML=`
-<td>${i}</td>
-<td><input value="${data.mat||""}"></td>
-<td><input value="${data.desc||""}"></td>
-<td><input type="number" value="${data.qty||""}"></td>
-<td><input value="${data.unit||""}"></td>
-<td><button class="delete-btn" onclick="deleteRow(this)">X</button></td>
-`;
+function saveData(){
+localStorage.setItem("specData",JSON.stringify(specData));
 }
 
-function deleteRow(btn){
-btn.parentElement.parentElement.remove();
-reindex();
+function showPage(page,btn){
+document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+
+if(page==="spec") loadSpec();
+if(page==="cutting") loadCutting();
+if(page==="material") loadMaterial();
 }
 
-function reindex(){
-let rows=document.querySelectorAll("#bom tr");
-rows.forEach((r,i)=>{
-if(i>0) r.cells[0].innerText=i;
-});
-}
+function loadSpec(){
+let html=`<h2>Spec Sheet Editor</h2>
 
-function saveStyle(){
-
-let name=document.getElementById("styleName").value;
-if(!name) return alert("Enter style name");
-
-let rows=document.querySelectorAll("#bom tr");
-let bom=[];
-
-rows.forEach((r,i)=>{
-if(i===0) return;
-let cells=r.querySelectorAll("input");
-bom.push({
-mat:cells[0].value,
-desc:cells[1].value,
-qty:cells[2].value,
-unit:cells[3].value
-});
-});
-
-db[name]={
-brand:brand.value,
-finish:finish.value,
-remarks:remarks.value,
-bom
-};
-
-localStorage.setItem("styles",JSON.stringify(db));
-refreshStyleList();
-alert("Saved!");
-}
-
-function loadStyle(){
-let name=styleList.value;
-if(!db[name]) return;
-
-let d=db[name];
-
-brand.value=d.brand;
-finish.value=d.finish;
-remarks.value=d.remarks;
-
-document.getElementById("bom").innerHTML=`
+<table>
 <tr>
-<th>S.No</th>
+<th>Part</th>
 <th>Material</th>
-<th>Description</th>
-<th>Qty/Bag</th>
-<th>Unit</th>
+<th>Qty</th>
 <th>Delete</th>
-</tr>
-`;
+</tr>`;
 
-d.bom.forEach(addRow);
+specData.forEach((row,i)=>{
+html+=`
+<tr>
+<td><input value="${row.part}" onchange="updateRow(${i},'part',this.value)"></td>
+<td><input value="${row.mat}" onchange="updateRow(${i},'mat',this.value)"></td>
+<td><input type="number" value="${row.qty}" onchange="updateRow(${i},'qty',this.value)"></td>
+<td><button class="small" onclick="deleteRow(${i})">X</button></td>
+</tr>`;
+});
+
+html+=`</table>
+<button class="add-btn" onclick="addRow()">+ Add Row</button>`;
+
+document.getElementById("content").innerHTML=html;
 }
 
-function searchStyle(){
-let q=search.value.toLowerCase();
-let list=document.getElementById("styleList");
-for(let o of list.options){
-o.hidden=!o.text.toLowerCase().includes(q) && o.value;
-}
+function addRow(){
+specData.push({part:"",mat:"",qty:0});
+saveData();
+loadSpec();
 }
 
-addRow();
+function deleteRow(i){
+specData.splice(i,1);
+saveData();
+loadSpec();
+}
+
+function updateRow(i,key,val){
+specData[i][key]=val;
+saveData();
+}
+
+function loadCutting(){
+let total=specData.reduce((sum,r)=>sum+Number(r.qty||0),0);
+
+document.getElementById("content").innerHTML=`
+<h2>Cutting Calculator</h2>
+<div class="card">
+Total Pieces Needed:
+<h1>${total}</h1>
+</div>`;
+}
+
+function loadMaterial(){
+let matSummary={};
+
+specData.forEach(r=>{
+if(!matSummary[r.mat]) matSummary[r.mat]=0;
+matSummary[r.mat]+=Number(r.qty||0);
+});
+
+let html=`<h2>Material Summary</h2><div class="card">`;
+
+for(let m in matSummary){
+html+=`<p>${m} : <b>${matSummary[m]}</b></p>`;
+}
+
+html+=`</div>`;
+document.getElementById("content").innerHTML=html;
+}
+
+showPage("spec",document.querySelector(".sidebar button"));
 
 </script>
 
