@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Material Planning</title>
+<title>Material Summary</title>
 <link rel="stylesheet" href="css/style.css">
-<script src="js/material.js" defer></script>
 </head>
 
 <body>
 
-<header class="top-bar">
-<button onclick="location.href='/bag-erp/index.html'">← Back</button>
-<h1>MATERIAL PLANNING</h1>
-</header>
+<div class="sidebar">
+<h2>Bag ERP</h2>
+<a href="index.html">Dashboard</a>
+<a href="specsheet.html">Spec Sheet</a>
+<a href="material.html" class="active">Material Summary</a>
+</div>
 
-<div id="materialWrap" style="padding:40px"></div>
+<div class="main">
+
+<h1>Material Summary</h1>
+
+<select id="styleSelect" onchange="loadMaterial()"></select>
+
+<div id="summary"></div>
+
+</div>
+
+<script src="js/db.js"></script>
+<script src="js/styles.js"></script>
+<script src="js/material.js"></script>
 
 </body>
 </html>
