@@ -1,22 +1,194 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Bag ERP</title>
-<link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<title>Bag ERP System</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+  transition: 0.25s ease;
+}
+
+body {
+  background: linear-gradient(135deg, #020617, #0f172a, #1e293b);
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TOP NAVBAR */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 36px;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.topbar .left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo {
+  letter-spacing: 3px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.system-title {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.profile {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+}
+
+/* LAYOUT */
+.container {
+  display: flex;
+  flex: 1;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(14px);
+  border-right: 1px solid rgba(255,255,255,0.1);
+  padding: 30px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  border: none;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.menu-btn:hover {
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  transform: translateX(6px);
+  box-shadow: 0 10px 25px rgba(99,102,241,0.3);
+}
+
+.menu-btn.active {
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  font-weight: bold;
+}
+
+/* MAIN DASHBOARD */
+.main {
+  flex: 1;
+  padding: 40px;
+}
+
+.dashboard-title {
+  font-size: 34px;
+  margin-bottom: 8px;
+}
+
+.dashboard-sub {
+  opacity: 0.7;
+  margin-bottom: 30px;
+}
+
+/* STATS */
+.stats-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.08);
+  padding: 28px;
+  border-radius: 18px;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  width: 200px;
+  text-align: center;
+}
+
+.stat-card span {
+  display: block;
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #38bdf8;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  background: rgba(255,255,255,0.15);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .sidebar {
+    width: 70px;
+  }
+
+  .menu-btn span {
+    display: none;
+  }
+
+  .stats-container {
+    justify-content: center;
+  }
+}
+</style>
 </head>
 
 <body>
 
-<header class="top-bar">
-<img src="logo.png" class="logo">
-<h1>BAG ERP SYSTEM</h1>
+<header class="topbar">
+  <div class="left">
+    <div class="logo">GAUGE MACHINE</div>
+    <div class="system-title">Bag ERP System</div>
+  </div>
+  <div class="profile"></div>
 </header>
 
-<div style="padding:40px; display:grid; gap:20px; max-width:400px;">
+<div class="container">
 
-<a href="specsheet.html"><button>Spec Sheet</button></a>
-<a href="cutting-planning.html"><button>Cutting Planning</button></a>
-<a href="material.html"><button>Material Planning</button></a>
+  <div class="sidebar">
+    <button class="menu-btn active">📋 <span>Spec Sheet</span></button>
+    <button class="menu-btn">✂ <span>Cutting Planning</span></button>
+    <button class="menu-btn">📦 <span>Material Planning</span></button>
+  </div>
+
+  <div class="main">
+    <div class="dashboard-title">Dashboard Overview</div>
+    <div class="dashboard-sub">Production • Planning • Control</div>
+
+    <div class="stats-container">
+      <div class="stat-card">Total Styles<span>18</span></div>
+      <div class="stat-card">Active Orders<span>12</span></div>
+      <div class="stat-card">Pending Materials<span>4</span></div>
+      <div class="stat-card">Cutting Ready<span>9</span></div>
+    </div>
+  </div>
 
 </div>
 
