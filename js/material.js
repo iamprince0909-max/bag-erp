@@ -1,39 +1,32 @@
-let specs = JSON.parse(localStorage.getItem("specs") || "{}");
-let plan = JSON.parse(localStorage.getItem("cutPlan") || "{}");
+function loadMaterialDropdown(){
+let sel=document.getElementById("styleSelect");
+sel.innerHTML="";
+getAllStyles().forEach(s=>{
+sel.innerHTML+=`<option>${s}</option>`;
+});
+}
 
-let total = {};
+function loadMaterial(){
+let style=styleSelect.value;
+let s=getStyle(style);
+if(!s) return;
 
-Object.keys(plan).forEach(style=>{
+let sum={};
 
-  let qty = plan[style].qty;
-  let spec = specs[style];
-
-  if(!spec) return;
-
-  spec.rows.forEach(r=>{
-
-    if(!total[r.material]) total[r.material]=0;
-
-    total[r.material] += r.per * qty;
-  });
+s.bom.forEach(r=>{
+if(!sum[r.mat]) sum[r.mat]=0;
+sum[r.mat]+=Number(r.qty||0);
 });
 
-render();
-
-function render(){
-
-  let html = `
-  <table>
-  <tr><th>Material</th><th>Total Required</th></tr>`;
-
-  Object.keys(total).forEach(m=>{
-    html += `<tr>
-    <td>${m}</td>
-    <td>${total[m].toFixed(2)}</td>
-    </tr>`;
-  });
-
-  html += "</table>";
-
-  document.getElementById("materialWrap").innerHTML = html;
+let html="<h3>Summary</h3>";
+for(let m in sum){
+html+=`<p>${m}: <b>${sum[m]}</b></p>`;
 }
+
+summary.innerHTML=html;
+}
+
+window.onload=()=>{
+loadMaterialDropdown();
+loadMaterial();
+};
