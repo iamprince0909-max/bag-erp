@@ -3,35 +3,42 @@
 <head>
 <title>Spec Sheet</title>
 <link rel="stylesheet" href="css/style.css">
-<script src="js/specsheet.js" defer></script>
 </head>
 
 <body>
 
-<header class="top-bar">
-<button onclick="location.href='/bag-erp/index.html'">← Back</button>
-<h1>SPEC SHEET</h1>
-</header>
+<div class="sidebar">
+<h2>Bag ERP</h2>
+<a href="index.html">Dashboard</a>
+<a href="specsheet.html" class="active">Spec Sheet</a>
+<a href="material.html">Material Summary</a>
+</div>
 
-<div style="padding:40px">
+<div class="main">
 
-Style:
-<input id="style">
+<h1>Spec Sheet Editor</h1>
 
-<button onclick="saveSpec()">Save</button>
+<div class="topbar">
+<select id="styleSelect" onchange="loadStyle()"></select>
+<button onclick="newStyle()">New Style</button>
+<button onclick="saveCurrentStyle()">Save</button>
+</div>
 
-<table id="specTable">
-<tr>
-<th>#</th>
-<th>Material</th>
-<th>Per Pcs</th>
-</tr>
-</table>
+<div class="header-inputs">
+<input id="brand" placeholder="Brand">
+<input id="finish" placeholder="Finish">
+<input id="remarks" placeholder="Remarks">
+</div>
 
-<br>
-<button onclick="addRow()">+ Add Row</button>
+<table id="bom"></table>
+
+<button class="add" onclick="addRow()">+ Add Row</button>
 
 </div>
+
+<script src="js/db.js"></script>
+<script src="js/styles.js"></script>
+<script src="js/specsheet.js"></script>
 
 </body>
 </html>
